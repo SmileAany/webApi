@@ -19,6 +19,11 @@ return [
 
     'default' => env('LOG_CHANNEL', 'stack'),
 
+    /**
+     * 当日志的level到达一定的级别是否开启消息推送
+     */
+    'notice'  => env('LOG_NOTICE',false),
+
     /*
     |--------------------------------------------------------------------------
     | Log Channels
