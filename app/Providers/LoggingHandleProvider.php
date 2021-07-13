@@ -15,11 +15,6 @@ class LoggingHandleProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->loggingListener();
-    }
-
-    public function loggingListener()
-    {
         if (config('logging.notice') !== false){
             Log::listen(function (MessageLogged $logger){
                 if (in_array($logger->level,['emergency','alert','critical','error','warning'])){
@@ -27,6 +22,8 @@ class LoggingHandleProvider extends ServiceProvider
 
                     $message = $logger->message;
                     $context = $logger->context;
+
+
                 }
             });
         }

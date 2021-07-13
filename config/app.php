@@ -200,6 +200,7 @@ return [
          * Custom Application
          */
         App\Providers\LoggingHandleProvider::class,
+        App\Providers\SqlHandleProvider::class,
     ],
 
     /*
