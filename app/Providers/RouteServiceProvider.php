@@ -43,10 +43,33 @@ class RouteServiceProvider extends ServiceProvider
                 ->namespace($this->namespace)
                 ->group(base_path('routes/api.php'));
 
+            $this->registerApiRouter();
+
             Route::middleware('web')
                 ->namespace($this->namespace)
                 ->group(base_path('routes/web.php'));
         });
+    }
+
+    /**
+     * @Notes:自定义指定文件夹下的路由
+     *
+     * @Author: smile
+     * @Date: 2021/7/18
+     * @Time: 17:31
+     */
+    public function registerApiRouter()
+    {
+        $apiFolder = strtoupper(config('api.version'));
+
+        $files = custom_path_file('routes/Api/'.$apiFolder);
+
+        foreach ($files as $file){
+            Route::prefix('api')
+                ->middleware('api')
+                ->namespace($this->namespace)
+                ->group(base_path($file));
+        }
     }
 
     /**
