@@ -17,6 +17,8 @@ $api->version('V1',[
             $api->put('logout','AuthController@logout')
                 ->middleware('jwt.token')
                 ->name('frontend.auth.logout.put');
+
+            $api->get('test','AuthController@test');
         });
     });
 });

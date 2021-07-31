@@ -201,6 +201,7 @@ return [
          */
         App\Providers\LoggingHandleProvider::class,
         App\Providers\SqlHandleProvider::class,
+        App\Providers\FacadesServiceProvider::class
     ],
 
     /*
