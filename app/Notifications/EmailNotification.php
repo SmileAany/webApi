@@ -29,14 +29,11 @@ class EmailNotification extends Notification
     /**
      * Create a new notification instance.
      *
-     * @param int $templateId
      * @param array $parameters
      */
-    public function __construct(int $templateId,array $parameters)
+    public function __construct(array $parameters)
     {
         $this->parameters = $parameters;
-
-        $this->templateId = $templateId;
 
         $this->queue = config('message.email.queue');
 
@@ -55,20 +52,20 @@ class EmailNotification extends Notification
      * @param  mixed  $notifiable
      * @return array
      */
-    public function via($notifiable)
+    public function via($notifiable): array
     {
         return [EmailChannel::class];
     }
 
-    public function toEmail($notifiable) : ? array
+    public function toEmail($notifiable) : array
     {
-        if (isset($notifiable->email) && !empty($notifiable->email)) {
-            try{
-                Mail::to($notifiable->email)
-                    ->send(new CustomEmail($this->templateId,$this->parameters));
-            }catch (\Exception $exception){
+        if (isset($notifiable->email) && !empty($notifiable->email) && filter_var($notifiable->email,FILTER_VALIDATE_EMAIL)) {
+            Mail::to($notifiable->email)
+                ->send(new CustomEmail($this->parameters));
 
-            }
+            return customer_return_success('success');
         }
+
+        return customer_return_error('error');
     }
 }

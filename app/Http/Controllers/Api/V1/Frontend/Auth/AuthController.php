@@ -99,7 +99,18 @@ class AuthController extends Controller
 
     public function test()
     {
+
+
         $emails = User::where('id',1)->get();
+
+        $emails = User::first();
+
+        $emails = '723891137@qq.com';
+//
+//        $emails = [
+//            '723891137@qq.com',
+//            '723891137@qq.com'
+//        ];
 
 //        $emails = User::first();
 
@@ -108,7 +119,8 @@ class AuthController extends Controller
             'templateId' => 1,
             'parameters' => [
 
-            ]
+            ],
+            'subject' => 'test'
         ];
 
 
