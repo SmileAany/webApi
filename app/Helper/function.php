@@ -57,6 +57,23 @@ if(!function_exists('custom_account_type')){
     }
 }
 
+if (!function_exists('customer_check_phone')) {
+    /**
+     * @Notes:正则验证手机号
+     *
+     * @param string $value
+     * @return bool
+     * @Author: smile
+     * @Date: 2021/8/9
+     * @Time: 16:48
+     */
+    function customer_check_phone(string $value) : bool {
+        return preg_match("/^1[3-9]{1}[0-9]{9}$|^([6|9])\d{7}$|^[0][9]\d{8}$|^[6]([8|6])\d{5}$/",$value)
+            ? true
+            : false;
+    }
+}
+
 if(!function_exists('customer_return_success')){
     /**
      * @Notes:返回正常数据

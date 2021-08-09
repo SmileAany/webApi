@@ -56,7 +56,7 @@ class CustomEmail extends Mailable
     {
         $email = $this->view($this->getView())
             ->subject($this->parameters['subject'])
-            ->with($this->parameters);
+            ->with($this->parameters['data']);
 
         //判断是否存在附件
         if (isset($this->parameters['cc']) && !empty($this->parameters['cc'])) {

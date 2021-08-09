@@ -2,8 +2,16 @@
 
 return [
     'email' => [
-        'status'     => true,
+        'status'     => false,
         'queue'      => 'email_queue',
+        'connection' => 'redis',
+        'tries'      => 3,
+        'sleep'      => 5,
+        'timeout'    => 60
+    ],
+    'sms' => [
+        'status'     => true,
+        'queue'      => 'sms_queue',
         'connection' => 'redis',
         'tries'      => 3,
         'sleep'      => 5,

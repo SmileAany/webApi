@@ -2,17 +2,12 @@
 
 namespace App\Http\Controllers\Api\V1\Frontend\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Models\User;
 use Illuminate\Http\Request;
 use App\Services\Auth\AuthService;
+use App\Http\Controllers\Controller;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Notification;
-use App\Notifications\EmailNotification;
-use App\Channels\EmailChannel;
-use App\Facades\Message;
 
 class AuthController extends Controller
 {
@@ -63,74 +58,5 @@ class AuthController extends Controller
         }
 
         return $this->failed($result['message']);
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function test()
-    {
-
-
-        $emails = User::where('id',1)->get();
-
-        $emails = User::first();
-
-        $emails = '723891137@qq.com';
-//
-//        $emails = [
-//            '723891137@qq.com',
-//            '723891137@qq.com'
-//        ];
-
-//        $emails = User::first();
-
-
-        $p = [
-            'templateId' => 1,
-            'parameters' => [
-
-            ],
-            'subject' => 'test'
-        ];
-
-
-        dd(Message::email($emails,$p));
-
-        $user = \App\Models\User::all();
-
-//        Notification::send($user,new EmailNotification('admin'));
-
-        Notification::route(EmailChannel::class,'admin')
-            ->notify(new EmailNotification('admin'));
     }
 }
