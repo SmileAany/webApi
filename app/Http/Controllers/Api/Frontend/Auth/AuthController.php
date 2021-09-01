@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Frontend\Auth;
+namespace App\Http\Controllers\Api\Frontend\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -97,28 +97,15 @@ class AuthController extends Controller
 
 
 
-    public function test()
+    public function test(Request $request)
     {
-        $emails = User::where('id',1)->get();
-
-//        $emails = User::first();
 
 
-        $p = [
-            'templateId' => 1,
-            'parameters' => [
 
-            ]
-        ];
+        Validator::make($request->all(),[
+            'name' => 'required|string'
+        ])->validate();
 
-
-        dd(Message::email($emails,$p));
-
-        $user = \App\Models\User::all();
-
-//        Notification::send($user,new EmailNotification('admin'));
-
-        Notification::route(EmailChannel::class,'admin')
-            ->notify(new EmailNotification('admin'));
+        dd(1111);
     }
 }

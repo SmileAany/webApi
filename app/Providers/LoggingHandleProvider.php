@@ -22,8 +22,6 @@ class LoggingHandleProvider extends ServiceProvider
 
                     $message = $logger->message;
                     $context = $logger->context;
-
-
                 }
             });
         }

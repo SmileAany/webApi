@@ -60,9 +60,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function registerApiRouter()
     {
-        $apiFolder = strtoupper(config('api.version'));
-
-        $files = custom_path_file('routes/Api/'.$apiFolder);
+        $files = custom_path_file('routes/Api/');
 
         foreach ($files as $file){
             Route::prefix('api')
