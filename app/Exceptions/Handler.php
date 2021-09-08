@@ -48,10 +48,18 @@ class Handler extends ExceptionHandler
         });
     }
 
+    protected function context(): array
+    {
+        return array_merge(parent::context(),[
+            'request' => request()->all(),
+            'header'  => request()->header()
+        ]);
+    }
+
     public function render($request, Throwable $e)
     {
         if ($e instanceof MethodNotAllowedHttpException) {
-            return $this->failed('请求方式异常',$e->getStatusCode());
+            return $this->failed('请求方式异常 '.$e->getMessage(),$e->getStatusCode());
         } else if ($e instanceof NotFoundHttpException) {
             return $this->notFound('路由异常');
         } else if ($e instanceof ValidationException) {

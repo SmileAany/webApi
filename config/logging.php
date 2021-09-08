@@ -17,7 +17,7 @@ return [
     |
     */
 
-    'default' => env('LOG_CHANNEL', 'stack'),
+    'default' => env('LOG_CHANNEL', 'error'),
 
     /**
      * 当日志的level到达一定的级别是否开启消息推送
@@ -50,6 +50,13 @@ return [
         'api' => [
             'driver' => 'daily',
             'path' => storage_path('logs/api/api.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 14,
+        ],
+
+        'error' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/error/error.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => 14,
         ],

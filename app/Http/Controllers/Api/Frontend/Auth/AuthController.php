@@ -106,6 +106,5 @@ class AuthController extends Controller
             'name' => 'required|string'
         ])->validate();
 
-        dd(1111);
     }
 }
