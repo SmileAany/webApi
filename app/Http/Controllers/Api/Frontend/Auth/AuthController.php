@@ -101,6 +101,6 @@ class AuthController extends Controller
 
     public function test()
     {
-        \Log::emergency('记录一条高等级的日志提醒');
+        dd(a);
     }
 }

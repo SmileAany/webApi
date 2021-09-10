@@ -18,7 +18,7 @@ class LoggingHandleProvider extends ServiceProvider
     {
         if (config('logging.notice') !== false){
             Log::listen(function (MessageLogged $logger){
-                if (in_array($logger->level,['emergency','alert','critical','error','warning'])){
+                if (in_array($logger->level,['warning'])){
                     if (config('robot.status')) {
                         $url = config('robot.robot_webhook_url');
 
