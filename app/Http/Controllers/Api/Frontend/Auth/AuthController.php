@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Frontend\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Test;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Services\Auth\AuthService;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Notification;
 use App\Notifications\EmailNotification;
 use App\Channels\EmailChannel;
 use App\Facades\Message;
+use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
 {
@@ -97,14 +99,8 @@ class AuthController extends Controller
 
 
 
-    public function test(Request $request)
+    public function test()
     {
-
-
-
-        Validator::make($request->all(),[
-            'name' => 'required|string'
-        ])->validate();
-
+        \Log::emergency('记录一条高等级的日志提醒');
     }
 }

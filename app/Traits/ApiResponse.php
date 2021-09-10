@@ -66,24 +66,26 @@ trait ApiResponse
     /**
      * @param $message
      * @param int $code
+     * @param array $errors
      * @param string $status
      * @return mixed
      */
-    public function failed($message, $code = FoundationResponse::HTTP_BAD_REQUEST, $status = 'error'){
+    public function failed($message, $code = FoundationResponse::HTTP_BAD_REQUEST,$errors = [], $status = 'error'){
 
-        return $this->setStatusCode($code)->message($message,$status);
+        return $this->setStatusCode($code)->message($message,$status,$errors);
     }
-
 
     /**
      * @param $message
      * @param string $status
+     * @param array $errors
      * @return mixed
      */
-    public function message($message, $status = "success"){
+    public function message($message, $status = "success",$errors = []){
 
         return $this->status($status,[
-            'message' => $message
+            'message' => $message,
+            'errors'  => $errors
         ]);
     }
 

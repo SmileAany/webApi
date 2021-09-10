@@ -10,8 +10,6 @@ use Illuminate\Support\Facades\Notification;
 
 class MessageService
 {
-
-
     /**
      * @Notes:
      *

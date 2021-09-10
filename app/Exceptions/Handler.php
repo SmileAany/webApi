@@ -4,12 +4,16 @@ namespace App\Exceptions;
 
 use Throwable;
 use App\Traits\ApiResponse;
+use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpFoundation\Response as FoundationResponse;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
 class Handler extends ExceptionHandler
@@ -48,6 +52,14 @@ class Handler extends ExceptionHandler
         });
     }
 
+    /**
+     * @Notes:改写日志类型
+     *
+     * @return array
+     * @Author: smile
+     * @Date: 2021/9/10
+     * @Time: 10:41
+     */
     protected function context(): array
     {
         return array_merge(parent::context(),[
@@ -56,33 +68,78 @@ class Handler extends ExceptionHandler
         ]);
     }
 
+    /**
+     * @Notes:输出错误
+     *
+     * @param $request
+     * @param Throwable $e
+     * @return JsonResponse|Response|mixed|FoundationResponse
+     * @Author: smile
+     * @Date: 2021/9/9
+     * @Time: 18:01
+     */
     public function render($request, Throwable $e)
     {
+        $message = $e->getMessage();
+
+        if (method_exists($e,'getStatusCode')) {
+            $statusCode = $e->getStatusCode();
+        } else if (method_exists($e,'getCode')) {
+            $statusCode = $e->getCode();
+        } else {
+            $statusCode = FoundationResponse::HTTP_INTERNAL_SERVER_ERROR;
+        }
+
         if ($e instanceof MethodNotAllowedHttpException) {
-            return $this->failed('请求方式异常 '.$e->getMessage(),$e->getStatusCode());
+            return $this->failed('请求方式异常 '.$message,$statusCode);
         } else if ($e instanceof NotFoundHttpException) {
             return $this->notFound('路由异常');
         } else if ($e instanceof ValidationException) {
             foreach ($e->errors() as $key => $value){
-                return $this->failed($value[0],422);
+                return $this->failed($value[0],$statusCode,$e->errors());
             }
         } else if ($e instanceof ThrottleRequestsException){
             $headers  = $e->getHeaders();
-            return $this->failed('请求太过频繁，请'.custom_second_trans($headers['Retry-After']).'后再试！');
+
+            return $this->failed('请求太过频繁，请'.custom_second_trans($headers['Retry-After']).'后再试！',$statusCode);
         } else if ($e instanceof AuthorizationException) {
-            return $this->failed($e->getMessage(),401);
+            return $this->failed($message,$statusCode);
         } else if ($e instanceof AuthenticationException){
-            return $this->failed($e->getMessage(),401);
+            return $this->failed($message,$statusCode);
         } else {
             return $this->internalError();
         }
     }
 
+    /**
+     * @Notes:
+     * 将日志记录到sentry
+     * @param Throwable $e
+     * @throws Throwable
+     * @Author: smile
+     * @Date: 2021/9/10
+     * @Time: 10:41
+     */
     public function report(Throwable $e)
     {
         if ($e instanceof \ErrorException || $e instanceof \ParseError || $e instanceof \TypeError || $e instanceof \CompileErro) {
-            if (app()->bound('sentry') && $this->shouldReport($e)) {
-                app('sentry')->captureException($e);
+            if ($this->shouldReport($e)) {
+                if (app()->bound('sentry')) {
+                    app('sentry')->captureException($e);
+                }
+
+                if (config('robot.status')) {
+                    $url = config('robot.robot_webhook_url');
+
+                    if (!empty($url) && is_string($url)) {
+                        Http::post($url,[
+                            'msgtype'  => 'markdown',
+                            'markdown' => [
+                                'content' => "<font color=\"red\">异常提醒，请相关同事核查</font> \n异常概要:".$e->getMessage()." \n异常文件: ".$e->getFile()."\n异常行列:".$e->getLine()." \n异常堆栈:[点击查看](https://sentry.io/organizations/fscom/issues/2638660684/)"
+                            ]
+                        ]);
+                    }
+                }
             }
         }
 

@@ -78,11 +78,15 @@ class RouteServiceProvider extends ServiceProvider
     protected function configureRateLimiting()
     {
         RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by(optional($request->user())->id ?: $request->ip());
+            return [
+                Limit::perMinute(60)->by(optional($request->user())->id ?: $request->ip()),
+                Limit::perMinutes(10,500)->by(optional($request->user())->id ?: $request->ip()),
+            ];
         });
 
+        //定义短信验证码接口限流器
         RateLimiter::for('sms',function (Request $request){
-            return Limit::perMinute(2)->by(optional($request->user())->id ?: $request->ip());
+            Limit::perMinute(2)->by($request->input('phone') ?: $request->ip());
         });
     }
 }
