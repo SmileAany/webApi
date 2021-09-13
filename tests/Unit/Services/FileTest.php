@@ -6,11 +6,9 @@ use Tests\TestCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use App\Services\File\FileService;
-use Illuminate\Foundation\Testing\WithFaker;
 
 class FileTest extends TestCase
 {
-    use WithFaker;
 
     /**
      * A basic unit test example.

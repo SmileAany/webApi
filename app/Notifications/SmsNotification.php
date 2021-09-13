@@ -2,15 +2,14 @@
 
 namespace App\Notifications;
 
-use App\Mail\CustomEmail;
+use App\Channels\SmsChannel;
 use Illuminate\Bus\Queueable;
-use App\Channels\EmailChannel;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
+use App\Services\Sms\SmsService;
 
-class EmailNotification extends Notification implements ShouldQueue
+class SmsNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -24,6 +23,8 @@ class EmailNotification extends Notification implements ShouldQueue
 
     public array $parameters;
 
+    public object $smsService;
+
     /**
      * Create a new notification instance.
      *
@@ -32,6 +33,8 @@ class EmailNotification extends Notification implements ShouldQueue
     public function __construct(array $parameters)
     {
         $this->parameters = $parameters;
+
+        $this->smsService = new SmsService();
 
         $this->queue = config('message.email.queue');
 
@@ -52,7 +55,7 @@ class EmailNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable): array
     {
-        return [EmailChannel::class];
+        return [SmsChannel::class];
     }
 
     /**
@@ -62,28 +65,33 @@ class EmailNotification extends Notification implements ShouldQueue
      * @return array
      * @Author: smile
      * @Date: 2021/8/9
-     * @Time: 15:47
+     * @Time: 17:18
      */
-    public function toEmail($notifiable) : array
+    public function toSms($notifiable) : array
     {
-        if (isset($notifiable->email) && !empty($notifiable->email)) {
+        if (isset($notifiable->phone) && !empty($notifiable->phone)) {
 
-            if (config('message.email.status') == true) {
-                if (filter_var($notifiable->email,FILTER_VALIDATE_EMAIL)) {
+            if (config('message.sms.status') == true) {
+                if (customer_check_phone($notifiable->phone)) {
                     try{
-                        Mail::to($notifiable->email)
-                            ->send(new CustomEmail($this->parameters));
+                        $result = $this->smsService->send($notifiable->phone,$this->parameters);
 
-                        return customer_return_success('success');
+                        if (!empty($result) && $result['qcloud']['status'] == 'success') {
+                            return customer_return_success('success');
+                        }
+
+                        return customer_return_error($result['qcloud']['result']['errmsg']);
                     }catch (\Exception $exception){
-                        return customer_return_error($exception->getMessage());
+                        $message = $exception->getExceptions()['qcloud']->getMessage() ?? $exception->getMessage();
+
+                        return customer_return_error($message);
                     }
                 } else {
-                    return customer_return_error('email 格式异常');
+                    return customer_return_error('phone 格式异常');
                 }
             }
 
-            return customer_return_error('email 停止发送');
+            return customer_return_error('phone 停止发送');
         }
     }
 }

@@ -11,20 +11,15 @@ class CustomEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public int $templateId;
-
     public array $parameters;
 
     /**
      * Create a new message instance.
      *
-     * @param int $templateId
      * @param array $parameters
      */
-    public function __construct(int $templateId,array $parameters)
+    public function __construct(array $parameters)
     {
-        $this->templateId = $templateId;
-
         $this->parameters = $parameters;
     }
 
@@ -38,15 +33,15 @@ class CustomEmail extends Mailable
      */
     public function getView(): string
     {
-        switch ($this->templateId) {
+        switch ($this->parameters['templateId']) {
             case 1:
-                $view = 'default';
+                $view = 'welcome';
                 break;
             default:
                 $view = 'register';
         }
 
-        return $view;
+        return 'emails.'.$view;
     }
 
     /**
@@ -61,7 +56,7 @@ class CustomEmail extends Mailable
     {
         $email = $this->view($this->getView())
             ->subject($this->parameters['subject'])
-            ->with($this->parameters);
+            ->with($this->parameters['data']);
 
         //判断是否存在附件
         if (isset($this->parameters['cc']) && !empty($this->parameters['cc'])) {
