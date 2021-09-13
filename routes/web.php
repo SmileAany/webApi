@@ -14,5 +14,33 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+
+    $array = [
+        'name' => [
+            'age' => '12'
+        ],
+        'age' => [
+            14
+        ]
+    ];
+
+
+    dd(customer_one_array($array,function ($item, &$result){
+
+        $result[] = $item . 123;
+    }));
+
+
+
+    $params = [
+        'namae' => 'smile',
+        'age'  => 12
+    ];
+
+    $str = '${name} 的年龄是 ${age}';
+
+    dd(customer_analysis_string('{','}',$str,$params));
+
 });
+
+

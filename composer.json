@@ -14,7 +14,8 @@
         "overtrue/laravel-wechat": "^6.0",
         "sentry/sentry-laravel": "^2.8",
         "tymon/jwt-auth": "^1.0",
-        "vladimir-yuldashev/laravel-queue-rabbitmq": "^11.3"
+        "vladimir-yuldashev/laravel-queue-rabbitmq": "^11.3",
+        "ext-curl": "*"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.10",

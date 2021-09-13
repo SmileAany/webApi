@@ -82,13 +82,17 @@ class Handler extends ExceptionHandler
     {
         $message = $e->getMessage();
 
-        if (method_exists($e,'getStatusCode')) {
+        if (method_exists($e,'getStatusCode') && $e->getStatusCode()) {
             $statusCode = $e->getStatusCode();
-        } else if (method_exists($e,'getCode')) {
+        } else if (method_exists($e,'getCode') && $e->getCode()) {
             $statusCode = $e->getCode();
-        } else {
+        } else if (property_exists($e,'status') && $e->status){
+            $statusCode = $e->status;
+        }else {
             $statusCode = FoundationResponse::HTTP_INTERNAL_SERVER_ERROR;
         }
+
+        $statusCode = $statusCode ?: FoundationResponse::HTTP_INTERNAL_SERVER_ERROR;
 
         if ($e instanceof MethodNotAllowedHttpException) {
             return $this->failed('请求方式异常 '.$message,$statusCode);
@@ -122,26 +126,26 @@ class Handler extends ExceptionHandler
      */
     public function report(Throwable $e)
     {
-        if ($e instanceof \ErrorException || $e instanceof \ParseError || $e instanceof \TypeError || $e instanceof \CompileErro) {
-            if ($this->shouldReport($e)) {
-                if (app()->bound('sentry')) {
-                    app('sentry')->captureException($e);
-                }
-
-                if (config('robot.status')) {
-                    $url = config('robot.robot_webhook_url');
-
-                    if (!empty($url) && is_string($url)) {
-                        Http::post($url,[
-                            'msgtype'  => 'markdown',
-                            'markdown' => [
-                                'content' => "<font color=\"red\">异常提醒，请相关同事核查</font> \n异常概要:".$e->getMessage()." \n异常文件: ".$e->getFile()."\n异常行列:".$e->getLine()." \n异常堆栈:[点击查看](https://sentry.io/organizations/fscom/issues/2638660684/)"
-                            ]
-                        ]);
-                    }
-                }
-            }
-        }
+//        if ($e instanceof \ErrorException || $e instanceof \ParseError || $e instanceof \TypeError || $e instanceof \CompileErro) {
+//            if ($this->shouldReport($e)) {
+//                if (app()->bound('sentry')) {
+//                    app('sentry')->captureException($e);
+//                }
+//
+//                if (config('robot.status')) {
+//                    $url = config('robot.robot_webhook_url');
+//
+//                    if (!empty($url) && is_string($url)) {
+//                        Http::post($url,[
+//                            'msgtype'  => 'markdown',
+//                            'markdown' => [
+//                                'content' => "<font color=\"red\">异常提醒，请相关同事核查</font> \n异常概要:".$e->getMessage()." \n异常文件: ".$e->getFile()."\n异常行列:".$e->getLine()." \n异常堆栈:[点击查看](https://sentry.io/organizations/fscom/issues/2638660684/)"
+//                            ]
+//                        ]);
+//                    }
+//                }
+//            }
+//        }
 
         parent::report($e);
     }

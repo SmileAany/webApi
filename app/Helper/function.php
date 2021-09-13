@@ -285,6 +285,7 @@ if (!function_exists('customer_array_sort')) {
             }
         }
         array_multisort($arrSort[$field], constant($sort), $array);
+
         return $array;
     }
 }
@@ -355,5 +356,109 @@ if(!function_exists('custom_get_user_ip')){
         }
 
         return $realIp ? explode(',', $realIp)[0] : '';
+    }
+}
+
+if (!function_exists('customer_analysis_string')) {
+    /**
+     * @Notes:解析指定的字符串
+     *
+     * @param string $startString
+     * @param string $endString
+     * @param string $string
+     * @param array $parameters
+     * @return string
+     * @Author: smile
+     * @Date: 2021/9/13
+     * @Time: 16:49
+     */
+    function customer_analysis_string(string $startString,string $endString,string $string,array $parameters) : string{
+        if (empty($startString) || empty($endString) || empty($parameters)) {
+            return $string;
+        }
+
+        $pattern = '/';
+
+        for ($i = 0; $i < strlen($startString) ; $i++) {
+            $pattern .= '\\'.$startString[$i];
+        }
+
+        $pattern = $pattern.'[^}]+';
+
+        for ($i = 0; $i < strlen($endString) ; $i++) {
+            $pattern .= '\\'.$endString[$i];
+        }
+
+        $pattern = $pattern.'/';
+
+        return preg_replace_callback($pattern,function ($item) use ($parameters,$startString,$endString){
+            $item = current($item);
+
+            $name = ltrim($item,$startString);
+            $name = rtrim($name,$endString);
+
+            return $parameters[$name] ?? $item;
+        },$string);
+    }
+}
+
+if (!function_exists('customer_one_array')) {
+    /**
+     * @Notes:多维数组变为一维数组
+     *
+     * @param array $array
+     * @param callable|null $callable
+     * @return array
+     * @Author: smile
+     * @Date: 2021/9/13
+     * @Time: 17:41
+     */
+    function customer_one_array(array $array,callable $callable = null) : array{
+        if (empty($array)) {
+            return [];
+        }
+
+        $result = [];
+
+        array_walk_recursive($array,function ($item) use (&$result,$callable) {
+            if ($callable != null) {
+                $callable($item,$result);
+            } else {
+                $result[] = $item;
+            }
+        });
+
+        return $result;
+    }
+}
+
+if(!function_exists('custom_curl_get')){
+    /**
+     * @Notes:curl get 请求
+     *
+     * @param $url
+     * @param $header
+     * @return bool|string
+     * @throws Exception
+     * @Author: smile
+     * @Date: 2021/9/13
+     * @Time: 17:43
+     */
+    function custom_curl_get($url,$header){
+        $ch = curl_init($url);
+        if(substr($url,0,5)=='https'){
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, true);
+        }
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        $result = curl_exec($ch);
+        if($error=curl_error($ch)){
+            throw new \Exception($error);
+        }
+        curl_close($ch);
+
+        return $result;
     }
 }
