@@ -12,6 +12,7 @@ use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
+use App\Exceptions\NoticeException;
 
 class Handler extends ExceptionHandler
 {
@@ -69,6 +70,14 @@ class Handler extends ExceptionHandler
         return intval($statusCode);
     }
 
+    /**
+     * 发送机器人
+     */
+    public function sendExceptionRobot(Throwable $e)
+    {
+
+    }
+
     public function render($request, Throwable $e)
     {
         $statusCode = $this->getExceptionStatusCode($e);
@@ -90,6 +99,9 @@ class Handler extends ExceptionHandler
             $seconds = $headers['Retry-After'] ?? 0;
 
             return $this->failed('请求频率太高，请'.$seconds.'秒后，重新访问',$statusCode);
+        } elseif ($e instanceof \ErrorException || $e instanceof \TypeError || $e instanceof \CompileError) {
+
+            return $this->internalError();
         }
 
         dd($e);

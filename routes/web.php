@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Facades\Message;
 use App\Services\robotService;
+use App\Exceptions\NoticeException;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,11 +18,20 @@ use App\Services\robotService;
 */
 
 Route::get('/', function () {
-    $service = new robotService();
-    dd($service->send('exception_robot',[
-        '异常提醒',
-        'ddd'
-    ]));
+    try {
+//        $service = new robotService();
+//        dd($service->send('exception_robot',[
+//            '异常提醒',
+//            'ddd'
+//        ]));
+
+        throw new \Exception('大的呃');
+    }catch (\Exception $exception) {
+        NoticeException::handle($exception);
+    }
+
+
+dd(111);
 
 
 });
