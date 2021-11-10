@@ -6,5 +6,6 @@ Route::group([
     'prefix' => 'auth',
     'namespace' => 'App\Http\Controllers\Api\Frontend\Auth'
 ],function ($route){
-    $route->post('login','AuthController@login');
+    $route->post('login','AuthController@login')
+        ->middleware('throttle:login');
 });

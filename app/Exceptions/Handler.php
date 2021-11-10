@@ -5,9 +5,13 @@ namespace App\Exceptions;
 
 use App\Traits\ApiResponse;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpFoundation\Response as FoundationResponse;
 use Throwable;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 
 class Handler extends ExceptionHandler
 {
@@ -45,12 +49,47 @@ class Handler extends ExceptionHandler
         });
     }
 
+    /**
+     * 获取到返回异常的code值
+     * @param Throwable $e
+     * @return int
+     */
+    public function getExceptionStatusCode(Throwable $e) : int
+    {
+        $statusCode = FoundationResponse::HTTP_INTERNAL_SERVER_ERROR;
+
+        if (isset($e->status) && $e->status) {
+            $statusCode = $e->status;
+        }
+
+        if (method_exists($e,'getStatusCode')) {
+            $statusCode = $e->getStatusCode();
+        }
+
+        return intval($statusCode);
+    }
+
     public function render($request, Throwable $e)
     {
+        $statusCode = $this->getExceptionStatusCode($e);
+
         if ($e instanceof NotFoundHttpException) {
             return $this->notFound();
         } else if ($e instanceof ValidationException) {
-            return $this->errors('接口验证异常',$e->errors(),$e->status);
+            return $this->errors('接口验证异常',$e->errors(),$statusCode);
+        } else if ($e instanceof MethodNotAllowedHttpException) {
+            if (app()->isLocal()) {
+                return $this->failed($e->getMessage());
+            }
+
+            return $this->notFound();
+        } else if ($e instanceof AuthenticationException) {
+
+        } else if ($e instanceof ThrottleRequestsException){
+            $headers = $e->getHeaders();
+            $seconds = $headers['Retry-After'] ?? 0;
+
+            return $this->failed('请求频率太高，请'.$seconds.'秒后，重新访问',$statusCode);
         }
 
         dd($e);
