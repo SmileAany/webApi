@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Facades\Message;
+use App\Services\robotService;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,18 +17,10 @@ use App\Facades\Message;
 */
 
 Route::get('/', function () {
-//    Message::email('ywjmylove@163.com',[
-//        'templateId' => 1,
-//        'subject'    => '注册',
-//        'data'       => [
-//
-//        ]
-//    ]);
+    $service = new robotService();
+    dd($service->send('exception_robot',[
+        '异常提醒',
+        'ddd'
+    ]));
 
-    Message::sms('15102750714',[
-        'data' => [
-            '注册验证',
-            '5438'
-        ]
-    ]);
 });

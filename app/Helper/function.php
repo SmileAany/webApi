@@ -11,7 +11,7 @@ if (!function_exists('custom_path_file')) {
      * @Date: 2021/7/18
      * @Time: 17:22
      */
-    function custom_path_file($path, $suffix = '.php'):array{
+    function custom_path_file($path, string $suffix = '.php'):array{
         $files = [];
         if (is_dir(base_path().'/'.$path)) {
             foreach (scandir(base_path().'/'.$path) as $dir) {
@@ -68,9 +68,7 @@ if (!function_exists('customer_check_phone')) {
      * @Time: 16:48
      */
     function customer_check_phone(string $value) : bool {
-        return preg_match("/^1[3-9]{1}[0-9]{9}$|^([6|9])\d{7}$|^[0][9]\d{8}$|^[6]([8|6])\d{5}$/",$value)
-            ? true
-            : false;
+        return (bool) preg_match("/^1[3-9]{1}[0-9]{9}$|^([6|9])\d{7}$|^[0][9]\d{8}$|^[6]([8|6])\d{5}$/", $value);
     }
 }
 
