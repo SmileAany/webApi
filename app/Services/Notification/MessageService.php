@@ -17,7 +17,7 @@ class MessageService
      * @Notes:
      *
      * @param $users string|array|object|Collection
-     * @param $parameters
+     * @param array $parameters
      * @return bool
      * @throws \Exception
      * @Author: smile
@@ -30,7 +30,7 @@ class MessageService
             throw new \Exception('参数异常');
         }
 
-        if (is_object($users)  && ($users instanceof User || $users instanceof Collection)){
+        if ($users instanceof User || $users instanceof Collection){
             Notification::send($users,new EmailNotification($parameters));
         }
 
@@ -51,7 +51,7 @@ class MessageService
      * @Notes:
      *
      * @param $users string|array|object|Collection
-     * @param $parameters
+     * @param array $parameters
      * @return bool
      * @throws \Exception
      * @Author: smile
@@ -64,18 +64,18 @@ class MessageService
             throw new \Exception('参数异常');
         }
 
-        if (is_object($users)  && ($users instanceof User || $users instanceof Collection)){
+        if ($users instanceof User || $users instanceof Collection){
             Notification::send($users,new SmsNotification($parameters));
         }
 
-        if (is_array($users) && $emails = $users ){
-            foreach($emails as $value){
+        if (is_array($users) && $phones = $users ){
+            foreach($phones as $value){
                 Notification::route(SmsChannel::class, $value)->notify(new SmsNotification($parameters));
             }
         }
 
-        if (is_string($users) && $email = $users){
-            Notification::route(SmsChannel::class, $email)->notify(new SmsNotification($parameters));
+        if (is_string($users) && $phone = $users){
+            Notification::route(SmsChannel::class, $phone)->notify(new SmsNotification($parameters));
         }
 
         return true;

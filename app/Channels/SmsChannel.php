@@ -11,6 +11,7 @@ class SmsChannel
     public function send($notifiable, Notification $notification)
     {
         if($notifiable instanceof AnonymousNotifiable){
+
             $class = new \stdClass();
             $class->id = null;
             $class->phone  = $notifiable->routes[__CLASS__];
@@ -19,7 +20,6 @@ class SmsChannel
         }
 
         $result = $notification->toSms($notifiable);
-
 
         if (!empty($result) && is_array($result)) {
             $data = [

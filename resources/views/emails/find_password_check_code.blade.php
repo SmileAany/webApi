@@ -27,7 +27,7 @@
                 <div style="line-height:1.5;font-size:14px;margin-bottom:25px;color:#4d4d4d;">
                     <strong style="display:block;margin-bottom:15px;">尊敬的用户：<span style="color:#f60;font-size: 16px;"></span>您好！</strong>
                     <strong style="display:block;margin-bottom:15px;">
-                        您正在进行<span style="color: red">找回密码</span>操作，请在验证码输入框中输入：<span style="color:#f60;font-size: 24px">{{$code}}</span>，以完成操作。
+                        您正在进行<span style="color: red">注销账号</span>操作，请在验证码输入框中输入：<span style="color:#f60;font-size: 24px">182614</span>，以完成操作。
                     </strong>
                 </div>
                 <div style="margin-bottom:30px;">
@@ -44,7 +44,7 @@
                     <p>此为系统邮件，请勿回复<br>
                         请保管好您的邮箱，避免账号被他人盗用
                     </p>
-                    <p>湖北虚拟科技</p>
+                    <p>飞速创新技术团队</p>
                 </div>
             </div>
         </td>

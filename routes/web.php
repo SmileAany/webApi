@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Facades\Message;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,5 +16,18 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+//    Message::email('ywjmylove@163.com',[
+//        'templateId' => 1,
+//        'subject'    => '注册',
+//        'data'       => [
+//
+//        ]
+//    ]);
+
+    Message::sms('15102750714',[
+        'data' => [
+            '注册验证',
+            '5438'
+        ]
+    ]);
 });

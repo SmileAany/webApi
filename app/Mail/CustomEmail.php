@@ -35,10 +35,10 @@ class CustomEmail extends Mailable
     {
         switch ($this->parameters['templateId']) {
             case 1:
-                $view = 'welcome';
+                $view = 'find_password_check_code';
                 break;
             default:
-                $view = 'register';
+                $view = 'find_password_check_code';
         }
 
         return 'emails.'.$view;

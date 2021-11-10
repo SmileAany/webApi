@@ -36,15 +36,15 @@ class SmsNotification extends Notification implements ShouldQueue
 
         $this->smsService = new SmsService();
 
-        $this->queue = config('message.email.queue');
+        $this->queue = config('message.sms.queue');
 
-        $this->tries = config('message.email.tries');
+        $this->tries = config('message.sms.tries');
 
-        $this->sleep = config('message.email.sleep');
+        $this->sleep = config('message.sms.sleep');
 
-        $this->timeout = config('message.email.timeout');
+        $this->timeout = config('message.sms.timeout');
 
-        $this->connection = config('message.email.connection');
+        $this->connection = config('message.sms.connection');
     }
 
     /**
@@ -70,7 +70,6 @@ class SmsNotification extends Notification implements ShouldQueue
     public function toSms($notifiable) : array
     {
         if (isset($notifiable->phone) && !empty($notifiable->phone)) {
-
             if (config('message.sms.status') == true) {
                 if (customer_check_phone($notifiable->phone)) {
                     try{

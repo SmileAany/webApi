@@ -2,7 +2,7 @@
 
 return [
     'email' => [
-        'status'     => false,
+        'status'     => true,
         'queue'      => 'email_queue',
         'connection' => 'redis',
         'tries'      => 3,
