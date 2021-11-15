@@ -18,20 +18,21 @@ use App\Exceptions\NoticeException;
 */
 
 Route::get('/', function () {
-    try {
-//        $service = new robotService();
-//        dd($service->send('exception_robot',[
-//            '异常提醒',
-//            'ddd'
-//        ]));
 
-        throw new \Exception('大的呃');
-    }catch (\Exception $exception) {
-        NoticeException::handle($exception);
+    $service = new robotService();
+
+    throw new \Exception('的','500');
+
+    try {
+
+    }catch (\Exception $exception){
+        dd(1111);
+
+        dd($exception->__toString());
+
+        dd($service->send('exception_robot',$exception));
     }
 
-
-dd(111);
 
 
 });

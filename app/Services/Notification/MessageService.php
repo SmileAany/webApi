@@ -3,7 +3,6 @@
 namespace App\Services\Notification;
 
 use App\Models\User;
-use App\Enums\MessageEnums;
 use App\Channels\SmsChannel;
 use App\Channels\EmailChannel;
 use App\Notifications\SmsNotification;

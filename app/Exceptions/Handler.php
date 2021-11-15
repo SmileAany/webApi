@@ -2,17 +2,16 @@
 
 namespace App\Exceptions;
 
-
-use App\Traits\ApiResponse;
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Symfony\Component\HttpFoundation\Response as FoundationResponse;
 use Throwable;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use App\Traits\ApiResponse;
+use App\Services\robotService;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
-use App\Exceptions\NoticeException;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpFoundation\Response as FoundationResponse;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -70,14 +69,6 @@ class Handler extends ExceptionHandler
         return intval($statusCode);
     }
 
-    /**
-     * 发送机器人
-     */
-    public function sendExceptionRobot(Throwable $e)
-    {
-
-    }
-
     public function render($request, Throwable $e)
     {
         $statusCode = $this->getExceptionStatusCode($e);
@@ -99,11 +90,20 @@ class Handler extends ExceptionHandler
             $seconds = $headers['Retry-After'] ?? 0;
 
             return $this->failed('请求频率太高，请'.$seconds.'秒后，重新访问',$statusCode);
-        } elseif ($e instanceof \ErrorException || $e instanceof \TypeError || $e instanceof \CompileError) {
+        } else {
+            $this->report($e);
 
-            return $this->internalError();
+            $message = mb_substr($e->__toString(),0,500);
+
+            //发送异常提醒
+            $robotService = new robotService();
+            $robotService->send('exception_robot',[
+                'message' => $message,
+                'status'  => $statusCode
+            ]);
+
+            return $this->internalError('系统异常，请稍后再试！');
         }
 
-        dd($e);
     }
 }

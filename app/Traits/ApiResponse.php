@@ -2,8 +2,8 @@
 
 namespace App\Traits;
 
-use Illuminate\Http\JsonResponse;
 use Response;
+use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response as FoundationResponse;
 
 trait ApiResponse
@@ -69,9 +69,10 @@ trait ApiResponse
      * @param $message
      * @param int $code
      * @param string $status
-     * @return mixed
+     * @return JsonResponse
      */
-    public function failed($message, int $code = FoundationResponse::HTTP_BAD_REQUEST, string $status = 'error'){
+    public function failed($message, int $code = FoundationResponse::HTTP_BAD_REQUEST, string $status = 'error'): JsonResponse
+    {
 
         return $this->setStatusCode($code)->message($message,$status);
     }

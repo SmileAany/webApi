@@ -28,7 +28,7 @@ class AuthController extends Controller
     {
         Validator::make($request->all(),[
             'account'  => 'required|string',
-            'password' => 'required|string'
+            'password' => 'required|string1'
         ])->validate();
 
         $result = $authService->login($request->only('account','password'));
