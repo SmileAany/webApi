@@ -2,10 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 
-use App\Facades\Message;
-use App\Services\robotService;
-use App\Exceptions\NoticeException;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -18,21 +14,5 @@ use App\Exceptions\NoticeException;
 */
 
 Route::get('/', function () {
-
-    $service = new robotService();
-
-    throw new \Exception('的','500');
-
-    try {
-
-    }catch (\Exception $exception){
-        dd(1111);
-
-        dd($exception->__toString());
-
-        dd($service->send('exception_robot',$exception));
-    }
-
-
-
+    return view('welcome');
 });

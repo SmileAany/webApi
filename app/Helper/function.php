@@ -113,3 +113,46 @@ if (!function_exists('customer_return_error')){
         ];
     }
 }
+
+if (!function_exists('customer_analysis_string')) {
+    /**
+     * @Notes:解析指定的字符串
+     *
+     * @param string $startString
+     * @param string $endString
+     * @param string $string
+     * @param array $parameters
+     * @return string
+     * @Author: smile
+     * @Date: 2021/9/13
+     * @Time: 16:49
+     */
+    function customer_analysis_string(string $startString,string $endString,string $string,array $parameters) : string{
+        if (empty($startString) || empty($endString) || empty($parameters)) {
+            return $string;
+        }
+
+        $pattern = '/';
+
+        for ($i = 0; $i < strlen($startString) ; $i++) {
+            $pattern .= '\\'.$startString[$i];
+        }
+
+        $pattern = $pattern.'[^}]+';
+
+        for ($i = 0; $i < strlen($endString) ; $i++) {
+            $pattern .= '\\'.$endString[$i];
+        }
+
+        $pattern = $pattern.'/';
+
+        return preg_replace_callback($pattern,function ($item) use ($parameters,$startString,$endString){
+            $item = current($item);
+
+            $name = ltrim($item,$startString);
+            $name = rtrim($name,$endString);
+
+            return $parameters[$name] ?? '';
+        },$string);
+    }
+}
